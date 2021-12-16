@@ -1,0 +1,30 @@
+#!/bin/bash
+#-- mygpg for wase of using gpg
+#-- -e -> PGP encryption
+#-- -d -> Decryption
+#-- -s -> Sign
+#-- -c -> Symmetric Encryption
+#-- -v -> Verify Signature
+#-- -a -> Armor (ASCII) works with -c, -e, -s when provided as $3 argument
+ARMOR='';
+if [[ $1 == '-c' ]]; then
+    if [[ $3 == '-a' ]]; then
+            ARMOR='--armor'
+    fi
+    gpg -c $ARMOR $2
+elif [[ $1 == '-e' ]]; then
+    if [[ $3 == '-a' ]]; then
+        ARMOR='--armor'
+    fi
+    gpg -e --sign $ARMOR -r $MY_PERSONAL_EMAIL $2
+elif [[ $1 == '-d' ]]; then
+    FNAME=`sed -r 's/(.*\..*)\.(asc|gpg)/\1/' <(echo $2)`
+    gpg -o $FNAME -d $2
+elif [[ $1 == '-s' ]]; then
+    if [[ $3 == '-a' ]]; then
+        ARMOR='--armor'
+    fi
+    gpg -s $ARMOR -r $MY_PERSONAL_EMAIL $2
+elif [[ $1 == '-v' ]]; then
+    gpg --verify $2
+fi

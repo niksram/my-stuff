@@ -1,0 +1,18 @@
+#!/bin/bash
+#-- credits AshishShenoy
+#-- convert image to text
+#-- performs it by reading image from clipboard
+#-- store scripts_path in bash varible to make it work as a shortcut
+#-- mkdir .imgtotext in $SCRIPT_PATH
+#-- adjust sleep according to your reaction time
+SCRIPTS_PATH='/home/niksram/.local/scripts'
+flameshot gui
+copyq &
+sleep 5
+set -e
+copyq read image/png 0 > $SCRIPTS_PATH/.imgtotext/image.png
+tesseract $SCRIPTS_PATH/.imgtotext/image.png $SCRIPTS_PATH/.imgtotext/output
+xclip -selection clipboard < $SCRIPTS_PATH/.imgtotext/output.txt && notify-send "OCR Complete"
+#for i in $(ps | awk 'NR>1 && $4=="copyq" {print $1}'); do kill $i; done # uncomment if you donot want copyq in background
+rm $SCRIPTS_PATH/.imgtotext/output.txt
+rm $SCRIPTS_PATH/.imgtotext/image.png
